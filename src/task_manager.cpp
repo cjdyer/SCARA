@@ -38,3 +38,9 @@ void TaskManager::handle_states(const struct CallbackAction& action)
 {
     // State machine
 }
+
+void TaskManager::send_ping_terminal()
+{
+    const char* msg = "~PING\r";
+    m_terminal.write_serial(msg);
+}

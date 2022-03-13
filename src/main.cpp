@@ -1,10 +1,7 @@
-#include "task_manager.h"
-#include <unistd.h>
+#include "auton_routine.h"
 
 int main()
 {
-    TaskManager task_m;
-    task_m.ehh();
-    sleep(2);
+    Auton::run_auton();
     return 0;
 };

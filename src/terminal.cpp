@@ -86,6 +86,7 @@ void Terminal::run_polling()
             Log::log_info(output);
         }
     }
+    
     // Timeout: notify subscriber
     // std::lock_guard<std::mutex> lck(m_timeout_callback_mutex);
     // if (m_timeout_callback) { m_timeout_callback(); }

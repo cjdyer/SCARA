@@ -32,11 +32,7 @@ public:
 
     void handle_trigger_action(struct CallbackAction& action) override;
 
-    void ehh()
-    {
-        const char* msg = "~PING\r";
-        m_terminal.write_serial(msg);
-    }
+    void send_ping_terminal();
     
 private: // Functions
     void timer_callback();
