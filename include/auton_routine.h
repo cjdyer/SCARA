@@ -9,6 +9,6 @@ public:
 
 private:
     explicit Auton();
-    ~Auton();   
+    ~Auton();
 
 }; // class Auton

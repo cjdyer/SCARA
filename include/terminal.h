@@ -22,8 +22,8 @@ using read_callback_t = std::function<void(const UserAction)>;
 class Terminal
 {
 public:
-    Terminal(const std::string& _port);
-    virtual ~Terminal();
+    Terminal();
+    ~Terminal();
 
     void set_read_callback(read_callback_t callback);
     void unset_read_callback();
@@ -40,7 +40,7 @@ private:
 private:
     struct termios m_config;
     int m_serial_port;
-    const std::string m_port;
+    const std::string m_port = "/dev/ttyACM0";
 
     std::mutex m_serial_mutex;
 
@@ -49,3 +49,4 @@ private:
     std::thread m_handler_thread;
     std::atomic<bool> m_polling_condition;
 };
+

@@ -1,7 +1,7 @@
 #include "terminal.h"
 #include "log.h"
 
-Terminal::Terminal(const std::string& _port) : m_port(_port)
+Terminal::Terminal()
 {
     m_serial_port = open(m_port.c_str(), O_RDWR);
 
@@ -11,17 +11,23 @@ Terminal::Terminal(const std::string& _port) : m_port(_port)
         return;
     }
 
-    m_config.c_cflag &= ~PARENB;    
-    m_config.c_cflag &= ~CSTOPB;        
-    m_config.c_cflag &= ~CSIZE;         
-    m_config.c_cflag |= CS8;          
-    m_config.c_cflag &= ~CRTSCTS;      
-    m_config.c_cflag |= CREAD | CLOCAL; 
+    m_config.c_cflag &= ~PARENB; // Clear parity bit, disabling parity (most common)
+    m_config.c_cflag &= ~CSTOPB; // Clear stop field, only one stop bit used in communication (most common)
+    m_config.c_cflag &= ~CSIZE; // Clear all bits that set the data size 
+    m_config.c_cflag |= CS8; // 8 bits per byte (most common)
+    m_config.c_cflag &= ~CRTSCTS; // Disable RTS/CTS hardware flow control (most common)
+    m_config.c_cflag |= CREAD | CLOCAL; // Turn on READ & ignore ctrl lines (CLOCAL = 1)
 
     m_config.c_lflag &= ~ICANON;
-    m_config.c_lflag &= ~ISIG;                                                        
-    m_config.c_iflag &= ~(IXON | IXOFF | IXANY);                                     
-    m_config.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR | IGNCR | ICRNL);
+    m_config.c_lflag &= ~ECHO; // Disable echo
+    m_config.c_lflag &= ~ECHOE; // Disable erasure
+    m_config.c_lflag &= ~ECHONL; // Disable new-line echo
+    m_config.c_lflag &= ~ISIG; // Disable interpretation of INTR, QUIT and SUSP
+    m_config.c_iflag &= ~(IXON | IXOFF | IXANY); // Turn off s/w flow ctrl
+    m_config.c_iflag &= ~(IGNBRK|BRKINT|PARMRK|ISTRIP|INLCR|IGNCR|ICRNL); // Disable any special handling of received bytes
+
+    m_config.c_oflag &= ~OPOST; // Prevent special interpretation of output bytes (e.g. newline chars)
+    m_config.c_oflag &= ~ONLCR;
 
     // Reading fucntionality
     m_config.c_cc[VTIME] = 0; // Time waited Deciseconds
@@ -50,7 +56,6 @@ void Terminal::set_read_callback(read_callback_t callback)
     std::lock_guard<std::mutex> guard(m_mutex);
     m_read_callback = callback;
 }
-
 
 void Terminal::unset_read_callback()
 {
@@ -94,14 +99,17 @@ void Terminal::run_polling()
     // Log::log_info("Timer::run_timer - Terminating thread...");
 }
 
-
 uint8_t Terminal::read_serial(char (&_output)[100]) 
 {
+    std::lock_guard<std::mutex> guard(m_serial_mutex);
     return read(m_serial_port, &_output, sizeof(_output));
 }
 
 void Terminal::write_serial(const char* _msg)
 {
+    std::lock_guard<std::mutex> guard(m_serial_mutex);
     write(m_serial_port, _msg, sizeof(_msg));
-    Log::log_info("Terminal::write_serial - " + std::string(_msg));
+    const char* cr = "\r";
+    write(m_serial_port, cr, sizeof(cr));
+    Log::log_info("Terminal::write_serial - " + std::string(reinterpret_cast<const char*>(_msg)));
 }

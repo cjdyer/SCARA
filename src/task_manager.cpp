@@ -1,8 +1,8 @@
 #include "task_manager.h"
 
-TaskManager::TaskManager() : AsyncHandler(), m_terminal("/dev/ttyACM0")
+TaskManager::TaskManager() : AsyncHandler()
 {
-    m_timer.set_timer_callback(std::bind(&TaskManager::timer_callback, this));
+    //m_timer.set_timer_callback(std::bind(&TaskManager::timer_callback, this));
     m_terminal.start_polling();
 
     Log::log_info("TaskManager::TaskManager - Started Task Manager");
@@ -10,11 +10,11 @@ TaskManager::TaskManager() : AsyncHandler(), m_terminal("/dev/ttyACM0")
 
 TaskManager::~TaskManager()
 {
-    stop_handler(); // Stop async handler
-
     m_terminal.stop_polling();
     m_timer.stop_timer();
     m_timer.unset_timer_callback();
+
+    stop_handler(); // Stop async handler
     Log::log_info("TaskManager::~TaskManager - Task Manager terminated gracefully...");
 }
 
@@ -41,6 +41,11 @@ void TaskManager::handle_states(const struct CallbackAction& action)
 
 void TaskManager::send_ping_terminal()
 {
-    const char* msg = "~PING\r";
+    //const char* msg = "~ID";
+    //const char* msg = "~PING";
+    //const char* msg = "~PROX";
+    //const char* msg = "~ROFFSET";
+    const char* msg = "~HOME,0.00005";
+    //const char* msg = "~MOVE,300,300,0";
     m_terminal.write_serial(msg);
 }
