@@ -72,5 +72,5 @@ void Timer::run_timer(const uint32_t timeout_ms)
     std::lock_guard<std::mutex> lck(m_timeout_callback_mutex);
     if (m_timeout_callback) { m_timeout_callback(); }
 
-    Log::log_info("Timer::run_timer - Terminating thread...");
+    Log::log_info("Timer::run_timer - Callback complete terminating thread...");
 }

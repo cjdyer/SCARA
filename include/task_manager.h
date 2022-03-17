@@ -1,9 +1,9 @@
 #pragma once
 
 #include <cstdint>
+#include "async_handler.h"
 #include "timer.h"
 #include "terminal.h"
-#include "async_handler.h"
 
 enum class MachineState
 {

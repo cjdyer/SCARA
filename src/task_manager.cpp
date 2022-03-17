@@ -41,11 +41,11 @@ void TaskManager::handle_states(const struct CallbackAction& action)
 
 void TaskManager::send_ping_terminal()
 {
-    //const char* msg = "~ID";
-    //const char* msg = "~PING";
-    //const char* msg = "~PROX";
-    //const char* msg = "~ROFFSET";
-    const char* msg = "~HOME,0.00005";
-    //const char* msg = "~MOVE,300,300,0";
+    //const char* msg = "~ID\r";
+    //const char* msg = "~PING\r";
+    //const char* msg = "~PROX\r";
+    //const char* msg = "~ROFFSET\r";
+    const char* msg = "~HOME,0.00005\r";
+    //const char* msg = "~MOVE,300,300,0\r";
     m_terminal.write_serial(msg);
 }

@@ -2,6 +2,12 @@
 
 #include "task_manager.h"
 
+struct MoveData
+{
+    uint16_t x, y, w;
+};
+
+
 class Auton
 {
 public:
