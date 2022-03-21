@@ -12,12 +12,12 @@
 #include <functional>
 #include <atomic>
 
-enum UserAction
+enum TerminalAction
 {
-    useraction_close
+    terminalaction_move
 };
 
-using read_callback_t = std::function<void(const UserAction)>;
+using read_callback_t = std::function<void(void)>;
 
 class Terminal
 {

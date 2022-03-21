@@ -2,8 +2,8 @@
 
 TaskManager::TaskManager() : AsyncHandler()
 {
-    //m_timer.set_timer_callback(std::bind(&TaskManager::timer_callback, this));
     m_terminal.start_polling();
+    m_terminal.set_read_callback(std::bind(&TaskManager::terminal_callback, this));
 
     Log::log_info("TaskManager::TaskManager - Started Task Manager");
 }
@@ -11,41 +11,39 @@ TaskManager::TaskManager() : AsyncHandler()
 TaskManager::~TaskManager()
 {
     m_terminal.stop_polling();
-    m_timer.stop_timer();
-    m_timer.unset_timer_callback();
+    m_terminal.unset_read_callback();
 
     stop_handler(); // Stop async handler
     Log::log_info("TaskManager::~TaskManager - Task Manager terminated gracefully...");
 }
 
-void TaskManager::handle_trigger_action(struct CallbackAction& action)
-{   
-    handle_states(action);
-    Log::log_info("TaskManager::handle_trigger_action - Action triggered");
-}
-
-void TaskManager::timer_callback()
+void TaskManager::terminal_callback()
 {
-    Log::log_info("TaskManager::timer_callback - Enter function");
+    Log::log_info("TaskManager::terminal_callback");
 
     // Trigger this action to be handled on a different thread, so this callback can return immediately
-    struct CallbackAction action;
-    action.type = CallbackType::timeout_callback;
-    trigger_handler_thread(action);
+    CallbackAction cb;
+    cb.type = CallbackType::terminal_callback;
+    cb.terminal_action = TerminalAction::terminalaction_move;
+    trigger_handler_thread(cb);
 }
 
-void TaskManager::handle_states(const struct CallbackAction& action)
+void TaskManager::set_machine_state(MachineState _machine_state)
 {
-    // State machine
+    m_machine_state.store(_machine_state);
 }
 
-void TaskManager::send_ping_terminal()
+void TaskManager::handle_trigger_action(struct CallbackAction& action)
 {
-    //const char* msg = "~ID\r";
-    //const char* msg = "~PING\r";
-    //const char* msg = "~PROX\r";
-    //const char* msg = "~ROFFSET\r";
-    const char* msg = "~HOME,0.00005\r";
-    //const char* msg = "~MOVE,300,300,0\r";
-    m_terminal.write_serial(msg);
+    m_machine_state.store(MachineState::STOPPED);
+}
+
+MachineState TaskManager::get_machine_state()
+{
+    return m_machine_state.load();
+}
+
+void TaskManager::send_terminal(std::string _msg)
+{
+    m_terminal.write_serial(("~" + _msg + "\r").c_str());
 }

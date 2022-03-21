@@ -14,14 +14,13 @@ enum class MachineState
 enum class CallbackType
 {
     undefined = 0,
-    user_input_callback = 1,
-    timeout_callback = 2
+    terminal_callback = 1
 };
 
 struct CallbackAction
 {
     CallbackType type = CallbackType::undefined;
-    UserAction user_action;
+    TerminalAction terminal_action;
 };
 
 class TaskManager : public AsyncHandler<struct CallbackAction>
@@ -32,14 +31,14 @@ public:
 
     void handle_trigger_action(struct CallbackAction& action) override;
 
-    void send_ping_terminal();
+    void send_terminal(std::string _msg);
+    void set_machine_state(MachineState _machine_state);
+    MachineState get_machine_state();
     
 private: // Functions
-    void timer_callback();
-    void input_callback();
-    void handle_states(const struct CallbackAction& action);
+    void terminal_callback();
 
 private: // Variables
-    Timer m_timer;
     Terminal m_terminal;
+    std::atomic<MachineState> m_machine_state;
 };

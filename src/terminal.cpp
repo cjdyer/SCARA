@@ -83,21 +83,25 @@ void Terminal::stop_polling()
 
 void Terminal::run_polling()
 {
+    Log::log_info("Timer::run_timer - Starting thread...");
+
     while(m_polling_condition.load())
     {
         char output[100];
         uint8_t num_bytes = read_serial(output);
         if (num_bytes > 0)
         {
-            Log::log_info(output);
+            Log::log_info("Terminal::write_serial - " + std::string(output));
+            if (output[1] == 'A' && output[2] == 'T') // This is a shit way of checking it
+            {
+                std::lock_guard<std::mutex> lck(m_mutex);
+                if (m_read_callback) { m_read_callback(); }
+            }
+
         }
     }
-    
-    // Timeout: notify subscriber
-    // std::lock_guard<std::mutex> lck(m_timeout_callback_mutex);
-    // if (m_timeout_callback) { m_timeout_callback(); }
 
-    // Log::log_info("Timer::run_timer - Terminating thread...");
+    Log::log_info("Timer::run_timer - Terminating thread...");
 }
 
 uint8_t Terminal::read_serial(char (&_output)[100]) 

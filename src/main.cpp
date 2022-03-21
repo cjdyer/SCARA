@@ -2,6 +2,7 @@
 
 int main()
 {
-    Auton::run_auton();
+    Auton a;
+    a.run_auton();
     return 0;
 };
