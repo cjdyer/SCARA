@@ -1,6 +1,6 @@
 #include "task_manager.h"
 
-TaskManager::TaskManager() : AsyncHandler()
+TaskManager::TaskManager()
 {
     m_terminal.start_polling();
     m_terminal.set_read_callback(std::bind(&TaskManager::terminal_callback, this));
@@ -13,7 +13,6 @@ TaskManager::~TaskManager()
     m_terminal.stop_polling();
     m_terminal.unset_read_callback();
 
-    stop_handler(); // Stop async handler
     Log::log_info("TaskManager::~TaskManager - Task Manager terminated gracefully...");
 }
 
@@ -21,21 +20,14 @@ void TaskManager::terminal_callback()
 {
     Log::log_info("TaskManager::terminal_callback");
 
-    // Trigger this action to be handled on a different thread, so this callback can return immediately
-    CallbackAction cb;
-    cb.type = CallbackType::terminal_callback;
-    cb.terminal_action = TerminalAction::terminalaction_move;
-    trigger_handler_thread(cb);
+    // Trigger this action, so this callback can return immediately
+    m_machine_state.store(MachineState::STOPPED);
+    
 }
 
 void TaskManager::set_machine_state(MachineState _machine_state)
 {
     m_machine_state.store(_machine_state);
-}
-
-void TaskManager::handle_trigger_action(struct CallbackAction& action)
-{
-    m_machine_state.store(MachineState::STOPPED);
 }
 
 MachineState TaskManager::get_machine_state()

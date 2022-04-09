@@ -10,9 +10,10 @@ struct MoveData
 class Auton
 {
 public:
-    void run_auton();
     Auton() {}
     ~Auton() {}
+
+    void run_auton();
 
 private:
     void move_to(MoveData _move_pos);

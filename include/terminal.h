@@ -18,7 +18,6 @@ enum TerminalAction
 };
 
 using read_callback_t = std::function<void(void)>;
-
 class Terminal
 {
 public:
