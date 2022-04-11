@@ -1,12 +1,8 @@
-#ifndef LOG_H
-#define LOG_H
+#pragma once
 
 #include <string>
 #include <iostream>
 #include <chrono>
-#include <ctime>
-#include <sstream>
-#include <iomanip>
 
 using namespace std::chrono_literals;
 
@@ -26,5 +22,3 @@ struct Log
         std::cout << get_time_stamp() << " " << msg.c_str() << std::endl << std::flush;
     }
 }; // struct Log
-
-#endif // LOG_H
