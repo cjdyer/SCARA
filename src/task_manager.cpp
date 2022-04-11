@@ -5,6 +5,8 @@ TaskManager::TaskManager()
     m_terminal.start_polling();
     m_terminal.set_read_callback(std::bind(&TaskManager::terminal_callback, this));
 
+    GPIO::initialise_gpio();
+
     Log::log_info("TaskManager::TaskManager - Started Task Manager");
 }
 

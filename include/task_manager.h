@@ -3,6 +3,7 @@
 #include <cstdint>
 #include "log.h"
 #include "terminal.h"
+#include "gpio.h"
 
 enum class MachineState
 {
