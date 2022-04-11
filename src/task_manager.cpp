@@ -22,7 +22,6 @@ void TaskManager::terminal_callback()
 
     // Trigger this action, so this callback can return immediately
     m_machine_state.store(MachineState::STOPPED);
-    
 }
 
 void TaskManager::set_machine_state(MachineState _machine_state)
