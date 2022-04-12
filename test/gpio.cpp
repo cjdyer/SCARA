@@ -59,9 +59,9 @@ static volatile int pi_is_2711 = 0;
 #define SYST_CLO 1
 #define SYST_CHI 2
 
-static volatile uint32_t  *gpioReg = MAP_FAILED;
-static volatile uint32_t  *systReg = MAP_FAILED;
-static volatile uint32_t  *bscsReg = MAP_FAILED;
+static volatile uint32_t  *gpioReg = static_cast<uint32_t *>MAP_FAILED;
+static volatile uint32_t  *systReg = static_cast<uint32_t *>MAP_FAILED;
+static volatile uint32_t  *bscsReg = static_cast<uint32_t *>MAP_FAILED;
 
 #define PI_BANK (gpio>>5)
 #define PI_BIT  (1<<(gpio&0x1F)) // Change to _pin
@@ -280,10 +280,15 @@ int main(int argc, char *argv[])
    gpioSetMode(17, PI_OUTPUT);
    gpioSetMode(27, PI_OUTPUT);
    gpioSetMode(22, PI_OUTPUT);
+
+   //gpioSetMode(2, PI_OUTPUT);
    
    // 17 - Step 
    // 27 - Direction
    // 22 - Enable
+
+   // 2 - Piston Down
+   // 3 - Piston Up
 
    gpioWrite(27, 0);
    gpioWrite(22, 0);
@@ -291,10 +296,16 @@ int main(int argc, char *argv[])
    while(1)
    {
       gpioWrite(17, 1);
-      usleep(1);
+      usleep(4);
       gpioWrite(17, 0);
-      usleep(1);
+      usleep(4);
    }
+
+   // gpioWrite(2, 1);
+   // usleep(240000);
+
+   // gpioWrite(2, 0);
    
+   // gpioWrite(2, 1);
    return 0;
 }

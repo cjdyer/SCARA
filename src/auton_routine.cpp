@@ -3,7 +3,28 @@
 void Auton::run_auton()
 {
     home(0.0001);
+    
+    // 17 - Step 
+    // 27 - Direction
+    // 22 - Enable
+    //  2 - Piston Down
+    //  3 - Piston Up
+
+    // GPIO::gpioSetMode(17, PI_OUTPUT);
+    // GPIO::gpioSetMode(27, PI_OUTPUT);
+    // GPIO::gpioSetMode(22, PI_OUTPUT);
+
+    // Log::log_info("Auton::run_auton - GPIO set");
+
+    // GPIO::gpioWrite(27, 0);
+    // GPIO::gpioWrite(22, 0);
+
+    // Log::log_info("Auton::run_auton - Stepper configured");
+
     sleep(5); // No response to check for homed so have to sleep
+
+    Log::log_info("Auton::run_auton - Homed");
+
     move_to_sync({240,370}); // Top right
     move_to_sync({420,300}); // Middle right (so doesnt hit the wall, like dumb robot)
     move_to_sync({600,370}); // Bottom right
@@ -26,5 +47,11 @@ void Auton::move_to_sync(MoveData _move_pos)
 {
     tm.set_machine_state(MachineState::RUNNING);
     move_to(_move_pos);
-    while(tm.get_machine_state() == MachineState::RUNNING) usleep(100);
+    while(tm.get_machine_state() == MachineState::RUNNING);
+    // {
+    //     GPIO::gpioWrite(17, 1);
+    //     usleep(1);
+    //     GPIO::gpioWrite(17, 0);
+    //     usleep(1);
+    // }
 }
