@@ -1,6 +1,8 @@
 #pragma once
 
 #include "task_manager.h"
+#include "gpio.h"
+#include "servo.h"
 
 struct MoveData
 {

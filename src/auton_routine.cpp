@@ -1,8 +1,15 @@
 #include "auton_routine.h"
 
+using namespace GPIO;
+
 void Auton::run_auton()
 {
-    home(0.0001);
+    gpio_init();
+    Servo s = Servo(26);
+    s.write_servo(1500);
+    sleep(3);
+
+    // home(0.0001);
     
     // 17 - Step 
     // 27 - Direction
@@ -21,16 +28,15 @@ void Auton::run_auton()
 
     // Log::log_info("Auton::run_auton - Stepper configured");
 
-    sleep(5); // No response to check for homed so have to sleep
+    // sleep(5); // No response to check for homed so have to sleep
+    // Log::log_info("Auton::run_auton - Homed");
 
-    Log::log_info("Auton::run_auton - Homed");
-
-    move_to_sync({240,370}); // Top right
-    move_to_sync({420,300}); // Middle right (so doesnt hit the wall, like dumb robot)
-    move_to_sync({600,370}); // Bottom right
-    move_to_sync({600,-80}); // Bottom left
-    move_to_sync({420,  0}); // Middle left (so doesnt hit the wall, like dumb robot)
-    move_to_sync({240,-80}); // Top left
+    // move_to_sync({240,370}); // Top right
+    // move_to_sync({420,300}); // Middle right (so doesnt hit the wall, like dumb robot)
+    // move_to_sync({600,370}); // Bottom right
+    // move_to_sync({600,-80}); // Bottom left
+    // move_to_sync({420,  0}); // Middle left (so doesnt hit the wall, like dumb robot)
+    // move_to_sync({240,-80}); // Top left
 }
 
 void Auton::home(double _move_accel)

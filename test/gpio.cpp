@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <iostream>
 #include <unistd.h>
 #include <stdint.h>
 #include <string.h>
@@ -211,10 +212,19 @@ unsigned gpioHardwareRevision(void)
       if (fread(buf, 1, sizeof(buf), filp) >= 8)
       {
          piPeriphBase = buf[4]<<24 | buf[5]<<16 | buf[6]<<8 | buf[7];
+
+         std::cout << (int)buf[8] << std::endl;
+         std::cout << (int)buf[9] << std::endl;
+         std::cout << (int)buf[10] << std::endl;
+         std::cout << (int)buf[11] << std::endl;
+
          if (!piPeriphBase)
             piPeriphBase = buf[8]<<24 | buf[9]<<16 | buf[10]<<8 | buf[11];
 
-         if (piPeriphBase == 0xFE00000) pi_is_2711 = 1;
+         if (piPeriphBase == 0xFE000000) 
+         {
+            pi_is_2711 = 1;
+         }
       }
       fclose(filp);
    }
@@ -254,7 +264,7 @@ int gpioInitialise(void)
       return -1;
    }
 
-   gpioReg  = initMapMem(fd, GPIO_BASE,  GPIO_LEN);
+   gpioReg  = static_cast<volatile uint32_t*>(mmap(0, GPIO_LEN, PROT_READ|PROT_WRITE|PROT_EXEC, MAP_SHARED|MAP_LOCKED, fd, GPIO_BASE));
    systReg  = initMapMem(fd, SYST_BASE,  SYST_LEN);
    bscsReg  = initMapMem(fd, BSCS_BASE,  BSCS_LEN);
 
@@ -292,14 +302,6 @@ int main(int argc, char *argv[])
 
    gpioWrite(27, 0);
    gpioWrite(22, 0);
-
-   while(1)
-   {
-      gpioWrite(17, 1);
-      usleep(4);
-      gpioWrite(17, 0);
-      usleep(4);
-   }
 
    // gpioWrite(2, 1);
    // usleep(240000);
