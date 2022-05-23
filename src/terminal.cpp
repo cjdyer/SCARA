@@ -6,8 +6,11 @@ Terminal::Terminal()
 {
     m_serial_port = open(m_port.c_str(), O_RDWR);
 
+    usleep(1000);
+
     if (tcgetattr(m_serial_port, &m_config) != 0)
     {
+        std::cout << "ERROR 1" << std::endl;
         // Need Error handling
         return;
     }
@@ -39,9 +42,12 @@ Terminal::Terminal()
 
     if (tcsetattr(m_serial_port, TCSANOW, &m_config) != 0)
     {
+        std::cout << "ERROR 2" << std::endl;
         // Need Error handling
         return;
     }
+
+    tcflush(m_serial_port, TCIOFLUSH);
 
     Log::log_info("Terminal::Terminal - Opened serial port at " + m_port);
 }
