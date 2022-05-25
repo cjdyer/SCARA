@@ -4,18 +4,23 @@ using namespace GPIO;
 
 void Auton::run_auton()
 {
-    // gpio_init();
-    // Servo s = Servo(26);
+    gpio_init();
+    // Servo s = Servo(13);
     // Log::log_info("Auton::run_auton - Setting servo to Min");
-    // s.write_servo(700);
-    // sleep(2);
+    // for (int i = 1500; i > 400; i -= 100)
+    // {
+    //     s.write_servo(i);
+    //     sleep(1);
+    //     std::cout << "SERVO TO : " << i << std::endl;
+    // }
+    sleep(1);
 
 
     // ~OFFSET,1,2500
-    sleep(2);
+    // sleep(2);
     // tm.send_terminal("OFFSET,3,130"); // 2500, -1250, 130
     // sleep(4);
-    tm.send_terminal("ROFFSET");
+    // tm.send_terminal("ROFFSET");
     // home(0.0001);
     
     // 17 - Step 
@@ -24,19 +29,45 @@ void Auton::run_auton()
     //  2 - Piston Down
     //  3 - Piston Up
 
-    // GPIO::gpioSetMode(17, PI_OUTPUT);
-    // GPIO::gpioSetMode(27, PI_OUTPUT);
-    // GPIO::gpioSetMode(22, PI_OUTPUT);
+    gpio_set_function(2, PI_FUNCTION::OUTPUT);
+    gpio_set_function(3, PI_FUNCTION::OUTPUT);
 
-    // Log::log_info("Auton::run_auton - GPIO set");
+    usleep(100);
 
-    // GPIO::gpioWrite(27, 0);
-    // GPIO::gpioWrite(22, 0);
+    while (true)
+    {
+        gpio_write(2, PI_OUTPUT::HIGH);
+        gpio_write(3, PI_OUTPUT::HIGH);
+        sleep(4);
+
+        std::cout << gpio_read(2) << std::endl;
+    }
+
+    // // Log::log_info("Auton::run_auton - GPIO set");
+    // usleep(100);
+
+
+    // gpio_set_function(16, PI_FUNCTION::OUTPUT);
+    // gpio_set_function(20, PI_FUNCTION::OUTPUT);
+    // gpio_set_function(21, PI_FUNCTION::OUTPUT);
+    // gpio_write(16, PI_OUTPUT::LOW);
+    // gpio_write(20, PI_OUTPUT::LOW);
+    // int step_count = 0;
+
+    // while (step_count < 10000)
+    // {
+    //     gpio_write(21, PI_OUTPUT::HIGH);
+    //     usleep(10);
+    //     gpio_write(21, PI_OUTPUT::LOW);
+    //     usleep(10);
+    //     step_count++;
+    // }
+    
 
     // Log::log_info("Auton::run_auton - Stepper configured");
 
-    sleep(5); // No response to check for homed so have to sleep
-    Log::log_info("Auton::run_auton - Homed");
+    // sleep(5); // No response to check for homed so have to sleep
+    // Log::log_info("Auton::run_auton - Homed");
 
     // move_to_sync({240,370}); // Top right
     // move_to_sync({420,300}); // Middle right (so doesnt hit the wall, like dumb robot)
