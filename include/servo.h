@@ -1,15 +1,16 @@
 #pragma once 
 
-#include "gpio.h"
+// #include "gpio.h"
+#include <wiringPi.h>
 
 class Servo
 {
 public:
-    Servo(uint8_t pin);
+    Servo(int pin);
     ~Servo();
 
-    void write_servo(uint32_t period_us);
+    void write_servo(int period_us);
 
 private:
-    const uint8_t m_pin;
+    const int m_pin;
 };

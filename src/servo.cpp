@@ -4,18 +4,26 @@
 // 900 nuetral
 // 1500 max
 
-Servo::Servo(uint8_t pin) : m_pin(pin) 
+Servo::Servo(int pin) : m_pin(pin) 
 { 
-    GPIO::gpio_set_function(m_pin, GPIO::PI_FUNCTION::OUTPUT);
-    GPIO::pwm_start(m_pin);
+    pinMode(1, PWM_OUTPUT);
+    // GPIO::gpio_set_function(m_pin, GPIO::PI_FUNCTION::OUTPUT);
+    //  set the PWM mode to milliseconds stype
+    pwmSetMode(PWM_MODE_MS);
+
+    //  divide down clock
+    pwmSetClock(192);
+    pwmSetRange(2000);
+    // GPIO::pwm_start(m_pin);
 }
 
 Servo::~Servo() 
 { 
-    GPIO::pwm_stop();
+    // GPIO::pwm_stop();
 }
 
-void Servo::write_servo(uint32_t period_us)
+void Servo::write_servo(int pulse)
 {
-    GPIO::pwm_write(20000, period_us);
+    pwmWrite(1, pulse);
+    // GPIO::pwm_write(20000, period_us);
 }

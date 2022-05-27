@@ -11,8 +11,12 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 include_directories(include)
 
+find_library(wiringPi_LIB wiringPi)
+
 file(GLOB sources src/*.cpp)
 
 add_executable(SCARA ${sources}) 
 
 target_link_libraries(SCARA PRIVATE Threads::Threads)
+
+target_link_libraries(SCARA PRIVATE wiringPi)

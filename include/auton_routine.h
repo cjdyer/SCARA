@@ -1,7 +1,7 @@
 #pragma once
 
 #include "task_manager.h"
-#include "gpio.h"
+// #include "gpio.h"
 #include "servo.h"
 
 struct MoveData
@@ -28,8 +28,8 @@ private:
 
 private:
     TaskManager tm;
-    int pulse = 21;
-    int direction = 20;
-    int enable = 16;
+    int pulse = 29; // wiringGPIO is 29 for GPIO21
+    int direction = 28; // wiringGPIO is 28 for GPIO20
+    int enable = 27; // wiringGPIO is 27 for GPIO16
 
 }; // class Auton

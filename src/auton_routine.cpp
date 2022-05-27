@@ -1,14 +1,15 @@
 #include "auton_routine.h"
 
-using namespace GPIO;
+// using namespace GPIO;
 
 void Auton::run_auton()
 {
-    gpio_init();
+    // gpio_init();
+    wiringPiSetup();
 
     // To begin we must home the arm
 
-    home(0.0001);
+    // home(0.0001);
 
     // sleep(5); // Don't need now because included in function
     Log::log_info("Auton::run_auton - Homed");
@@ -23,52 +24,63 @@ void Auton::run_auton()
 
     // lower the pneumatics 
     // Pneumatics
-    //  2 - Piston Down
-    //  3 - Piston Up
-    use_pneumatics(2);
+    //  WiringGPIO 8 - GPIO2 - Piston Down
+    //  WiringGPIO 9 - GPIO3 - Piston Up
+    Log::log_info("Piston down");
+    use_pneumatics(8);
 
     // close the gripper
 
-    gripper_close(2);
+    gripper_close(1);
 
     // Move the pneumatics up again
-    use_pneumatics(3);
+    Log::log_info("Piston up");
+    use_pneumatics(9);
 
     // Move the arm over to the side
     // move_to_sync({420,300}); // Middle right
 
     // Move the pneumatics down
-    use_pneumatics(2);
+    Log::log_info("Piston down");
+    use_pneumatics(8);
 
     // release the gripper to place the box
-    gripper_open(2);
+    gripper_open(1);
 
     // Move the pneumatics up again
-    use_pneumatics(3);
+    Log::log_info("Piston up");
+    use_pneumatics(9);
 
     // move to second box position
     // move_to_sync({600,370}); // Bottom right
 
     // lower pneumatics
-    use_pneumatics(2);
+    Log::log_info("Piston down");
+    use_pneumatics(8);
 
     // close gripper
-    gripper_close(2);
+    gripper_close(1);
 
     // lift pneumatics
-    use_pneumatics(3);
+    Log::log_info("Piston up");
+    use_pneumatics(9);
 
     // move box to same position on the side
     // move_to_sync({420,300}); // Middle right
 
     // lower pneumatics
-    use_pneumatics(2);
+    Log::log_info("Piston down");
+    use_pneumatics(8);
 
     // release gripper
     gripper_open(2);
 
+    // raise pneumatics
+    Log::log_info("Piston up");
+    use_pneumatics(9);
+
     // return arm to home and finish
-    home(0.0001);
+    // home(0.0001);
 
     // ~OFFSET,1,2500
     // sleep(2);
@@ -82,19 +94,31 @@ void Auton::run_auton()
 // Run conveyor belt
 void Auton::use_belt(int pulse, int direction, int enable)
 {
-    gpio_set_function(enable, PI_FUNCTION::OUTPUT);
-    gpio_set_function(direction, PI_FUNCTION::OUTPUT);
-    gpio_set_function(pulse, PI_FUNCTION::OUTPUT);
-    gpio_write(enable, PI_OUTPUT::LOW);
-    gpio_write(direction, PI_OUTPUT::LOW);
+    // gpio_set_function(enable, PI_FUNCTION::OUTPUT);
+    // gpio_set_function(direction, PI_FUNCTION::OUTPUT);
+    // gpio_set_function(pulse, PI_FUNCTION::OUTPUT);
+    // gpio_write(enable, PI_OUTPUT::LOW);
+    // gpio_write(direction, PI_OUTPUT::LOW);
+
+    pinMode(pulse, OUTPUT);
+    pinMode(direction, OUTPUT);
+    pinMode(enable, OUTPUT);
+    digitalWrite(enable, 0);
+    digitalWrite(direction, 0);
+
     int step_count = 0;
 
     while (step_count < 10000)
     {
-        gpio_write(pulse, PI_OUTPUT::HIGH);
+        // gpio_write(pulse, PI_OUTPUT::HIGH);
+        // usleep(10);
+        // gpio_write(pulse, PI_OUTPUT::LOW);
+        // usleep(10);
+        digitalWrite(pulse, 1);
         usleep(10);
-        gpio_write(pulse, PI_OUTPUT::LOW);
+        digitalWrite(pulse, 0);
         usleep(10);
+
         step_count++;
     }
 
@@ -125,13 +149,17 @@ void Auton::use_pneumatics(int pin_direction)
     //  2 - Piston Down
     //  3 - Piston Up
 
-    gpio_set_function(pin_direction, PI_FUNCTION::OUTPUT);
+    // gpio_set_function(pin_direction, PI_FUNCTION::OUTPUT);
+    pinMode(pin_direction, OUTPUT);
 
     usleep(100);
 
-    gpio_write(pin_direction, PI_OUTPUT::HIGH);
+    // gpio_write(pin_direction, PI_OUTPUT::HIGH);
+    digitalWrite(pin_direction, 1);
+    Log::log_info("Piston moving");
     sleep(4); // give time for pneumatics to finish
-    gpio_write(pin_direction, PI_OUTPUT::LOW); // set low again ready for other solenoid to run
+    // gpio_write(pin_direction, PI_OUTPUT::LOW); // set low again ready for other solenoid to run
+    digitalWrite(pin_direction, 0);
     Log::log_info("Piston moved");
     // this is what it was and I think this was wrong, was writing both high and doing this same thing every 4 sec. 
     // Never did we write the pin low. What we need to do is write it low after a period of time, so that when the 
@@ -151,13 +179,13 @@ void Auton::gripper_close(int pin)
 {
     Servo s = Servo(pin);
     Log::log_info("Auton::run_auton - Setting servo to Min");
-    for (int i = 1500; i > 400; i -= 100)
+    for (int i = 250; i > 50; i -= 1)
     {
         s.write_servo(i);
-        sleep(1);
+        usleep(10000);
         std::cout << "SERVO TO : " << i << std::endl;
     }
-    sleep(5);
+    usleep(10000);
     Log::log_info("Gripper closed");
 }
 
@@ -165,13 +193,14 @@ void Auton::gripper_open(int pin)
 {
     Servo s = Servo(pin);
     Log::log_info("Auton::run_auton - Setting servo to Max");
-    for (int i = 100; i < 1400; i += 100)
+    for (int i = 50; i < 250; i += 1)
     {
         s.write_servo(i);
-        sleep(1);
+        usleep(10000);
         std::cout << "SERVO TO : " << i << std::endl;
     }
-    sleep(5);
+    s.write_servo(0); // When open want to turn pwm signal to zero so it doesn't continue to engage motor
+    usleep(10000);
     Log::log_info("Gripper opened");
 }
 
