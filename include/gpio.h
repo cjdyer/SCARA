@@ -118,7 +118,7 @@ namespace GPIO
     static uint8_t pwm_pin;
 
     static constexpr uint32_t gpio_base_address = 0xFE200000;
-    static constexpr uint32_t gpio_len          = 0x000000F4;
+    static constexpr uint32_t gpio_len          = 0x000000D0;
     static constexpr uint32_t pwm_base_address  = 0xFE20C000; // PWM 0
     static constexpr uint32_t pwm_len           = 0x00000028;
     static constexpr uint32_t sys_base_address  = 0xFE003000;

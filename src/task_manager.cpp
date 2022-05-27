@@ -3,15 +3,15 @@
 TaskManager::TaskManager()
 {
     //m_terminal.start_polling();
-    m_terminal.set_read_callback(std::bind(&TaskManager::terminal_callback, this));
+    // m_terminal.set_read_callback(std::bind(&TaskManager::terminal_callback, this));
 
     Log::log_info("TaskManager::TaskManager - Started Task Manager");
 }
 
 TaskManager::~TaskManager()
 {
-    m_terminal.stop_polling();
-    m_terminal.unset_read_callback();
+    // m_terminal.stop_polling();
+    // m_terminal.unset_read_callback();
 
     Log::log_info("TaskManager::~TaskManager - Task Manager terminated gracefully...");
 }
@@ -36,5 +36,5 @@ MachineState TaskManager::get_machine_state()
 
 void TaskManager::send_terminal(std::string _msg)
 {
-    m_terminal.write_serial(("~" + _msg + "\r").c_str());
+    // m_terminal.write_serial(("~" + _msg + "\r").c_str());
 }

@@ -26,7 +26,7 @@ private: // Functions
     void terminal_callback();
 
 private: // Variables
-    Terminal m_terminal;
+    // Terminal m_terminal;
     std::atomic<MachineState> m_machine_state;
     
 }; // class TaskManager
