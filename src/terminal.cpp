@@ -97,7 +97,7 @@ void Terminal::run_polling()
         uint8_t num_bytes = read_serial(output);
         if (num_bytes > 0)
         {
-            Log::log_info("Terminal::read_serial - " + std::string(output));
+            // Log::log_info("Terminal::read_serial - " + std::string(output));
             if (output[1] == 'A' && output[2] == 'T') // This is a shit way of checking it
             {
                 std::lock_guard<std::mutex> lck(m_mutex);

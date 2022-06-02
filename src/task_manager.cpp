@@ -36,5 +36,5 @@ MachineState TaskManager::get_machine_state()
 
 void TaskManager::send_terminal(std::string _msg)
 {
-    m_terminal.write_serial(("~" + _msg + "\r").c_str());
+    m_terminal.write_serial(("~" + _msg + "\n\r").c_str());
 }

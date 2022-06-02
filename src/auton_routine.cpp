@@ -16,7 +16,7 @@ void Auton::run_auton()
     // tm.send_terminal("ROFFSET");
     // sleep(10);
 
-    // // To begin we must home the arm
+    // To begin we must home the arm
 
     // home(0.0001);
 
@@ -25,7 +25,7 @@ void Auton::run_auton()
     // sleep(1);
 
     // // sleep(5); // Don't need now because included in function
-    // Log::log_info("Auton::run_auton - Homed");
+    Log::log_info("Auton::run_auton - Homed");
 
 
     // // then move the belt forward with the two blocks
@@ -33,11 +33,12 @@ void Auton::run_auton()
 
     // // void use_belt(int pulse, int direction, int enable);
     use_belt(pulse,direction,enable); // moves 10,000 steps forward
-    sleep(1);
-    // // then position the arm above the left hand box
+    
+    // then position the arm above the left hand box
     // move_to_sync({575,60}); // Bottom left
     // sleep(5);
-
+    use_pneumatics(8);
+    // sleep(1);
     // // lower the pneumatics 
     // // Pneumatics
     // //  WiringGPIO 8 - GPIO2 - Piston Up
@@ -56,7 +57,6 @@ void Auton::run_auton()
 
     // // Move the arm over to the side
     // move_to_sync({375,360}); // to the side for stacking
-    // sleep(5);
 
     // // Move the pneumatics down
     // Log::log_info("Piston down");
@@ -71,7 +71,6 @@ void Auton::run_auton()
 
     // // move to second box position
     // move_to_sync({575,190}); // second box position
-    // sleep(5);
 
     // lower pneumatics
     Log::log_info("Piston down");
@@ -182,7 +181,7 @@ void Auton::use_pneumatics(int pin_direction)
         sleep(1);
     }
     else{
-        usleep(300000); // shortened time to prevent gripper damage
+        usleep(250000); // shortened time to prevent gripper damage
     }
     
     // gpio_write(pin_direction, PI_OUTPUT::LOW); // set low again ready for other solenoid to run
@@ -234,7 +233,7 @@ void Auton::gripper_open(int pin)
 
 void Auton::home(double _move_accel)
 {
-    tm.send_terminal("HOME," + std::to_string(_move_accel));
+    tm.send_terminal("HOME,0.0001");//"HOME," + std::to_string(_move_accel));
     sleep(5); 
     Log::log_info("Home");
 }
