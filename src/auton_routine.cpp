@@ -7,77 +7,97 @@ void Auton::run_auton()
     // gpio_init();
     wiringPiSetup();
 
-    // To begin we must home the arm
+    // tm.send_terminal("OFFSET,1,2500"); // 2500, -1250, 130
+    // sleep(1);
+    // tm.send_terminal("OFFSET,2,-1250"); // 2500, -1250, 130
+    // sleep(1);
+    // tm.send_terminal("OFFSET,3,130"); // 2500, -1250, 130
+    // sleep(1);
+    // tm.send_terminal("ROFFSET");
+    // sleep(10);
+
+    // // To begin we must home the arm
 
     // home(0.0001);
 
-    // sleep(5); // Don't need now because included in function
-    Log::log_info("Auton::run_auton - Homed");
+    // tm.send_terminal("ROFFSET");
 
-    // then move the belt forward with the two blocks
+    // sleep(1);
 
-    // void use_belt(int pulse, int direction, int enable);
+    // // sleep(5); // Don't need now because included in function
+    // Log::log_info("Auton::run_auton - Homed");
+
+
+    // // then move the belt forward with the two blocks
+    Log::log_info("run belt");
+
+    // // void use_belt(int pulse, int direction, int enable);
     use_belt(pulse,direction,enable); // moves 10,000 steps forward
-    
-    // then position the arm above the left hand box
-    // move_to_sync({600,-80}); // Bottom left
+    sleep(1);
+    // // then position the arm above the left hand box
+    // move_to_sync({575,60}); // Bottom left
+    // sleep(5);
 
-    // lower the pneumatics 
-    // Pneumatics
-    //  WiringGPIO 8 - GPIO2 - Piston Down
-    //  WiringGPIO 9 - GPIO3 - Piston Up
+    // // lower the pneumatics 
+    // // Pneumatics
+    // //  WiringGPIO 8 - GPIO2 - Piston Up
+    // //  WiringGPIO 9 - GPIO3 - Piston Down
     Log::log_info("Piston down");
-    use_pneumatics(8);
+    use_pneumatics(9);
 
-    // close the gripper
+    // // close the gripper
 
-    gripper_close(1);
+    gripper_close(23);
+    sleep(5);
 
     // Move the pneumatics up again
     Log::log_info("Piston up");
-    use_pneumatics(9);
-
-    // Move the arm over to the side
-    // move_to_sync({420,300}); // Middle right
-
-    // Move the pneumatics down
-    Log::log_info("Piston down");
     use_pneumatics(8);
+
+    // // Move the arm over to the side
+    // move_to_sync({375,360}); // to the side for stacking
+    // sleep(5);
+
+    // // Move the pneumatics down
+    // Log::log_info("Piston down");
+    use_pneumatics(9);
 
     // release the gripper to place the box
-    gripper_open(1);
+    gripper_open(23);
 
     // Move the pneumatics up again
     Log::log_info("Piston up");
-    use_pneumatics(9);
+    use_pneumatics(8);
 
-    // move to second box position
-    // move_to_sync({600,370}); // Bottom right
+    // // move to second box position
+    // move_to_sync({575,190}); // second box position
+    // sleep(5);
 
     // lower pneumatics
     Log::log_info("Piston down");
-    use_pneumatics(8);
+    use_pneumatics(9);
 
     // close gripper
-    gripper_close(1);
+    gripper_close(23);
 
     // lift pneumatics
     Log::log_info("Piston up");
-    use_pneumatics(9);
+    use_pneumatics(8);
 
-    // move box to same position on the side
-    // move_to_sync({420,300}); // Middle right
+    // // move box to same position on the side
+    // move_to_sync({375,360}); // to the side for stacking
+    // sleep(5);
 
     // lower pneumatics
     Log::log_info("Piston down");
-    use_pneumatics(8);
+    use_pneumatics(9);
 
     // release gripper
-    gripper_open(2);
+    gripper_open(23);
 
     // raise pneumatics
     Log::log_info("Piston up");
-    use_pneumatics(9);
+    use_pneumatics(8);
 
     // return arm to home and finish
     // home(0.0001);
@@ -120,6 +140,7 @@ void Auton::use_belt(int pulse, int direction, int enable)
         usleep(10);
 
         step_count++;
+        Log::log_info("step_count");
     }
 
     // gpio_set_function(16, PI_FUNCTION::OUTPUT);
@@ -146,8 +167,8 @@ void Auton::use_belt(int pulse, int direction, int enable)
 void Auton::use_pneumatics(int pin_direction)
 {
     // Pneumatics
-    //  2 - Piston Down
-    //  3 - Piston Up
+    //  2 - Piston Up - wiringGPIO 8
+    //  3 - Piston Down - wiringGPIO 9
 
     // gpio_set_function(pin_direction, PI_FUNCTION::OUTPUT);
     pinMode(pin_direction, OUTPUT);
@@ -156,11 +177,18 @@ void Auton::use_pneumatics(int pin_direction)
 
     // gpio_write(pin_direction, PI_OUTPUT::HIGH);
     digitalWrite(pin_direction, 1);
-    Log::log_info("Piston moving");
-    sleep(4); // give time for pneumatics to finish
+    // Log::log_info("Piston moving");
+    if(pin_direction==8){
+        sleep(1);
+    }
+    else{
+        usleep(300000); // shortened time to prevent gripper damage
+    }
+    
     // gpio_write(pin_direction, PI_OUTPUT::LOW); // set low again ready for other solenoid to run
     digitalWrite(pin_direction, 0);
     Log::log_info("Piston moved");
+    sleep(1);
     // this is what it was and I think this was wrong, was writing both high and doing this same thing every 4 sec. 
     // Never did we write the pin low. What we need to do is write it low after a period of time, so that when the 
     // other pin is set high it will trigger the other solenoid to run. 

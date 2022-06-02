@@ -1,12 +1,12 @@
 #include "servo.h"
 
 // 400  min
-// 900 nuetral
+// 900 neutral
 // 1500 max
 
 Servo::Servo(int pin) : m_pin(pin) 
 { 
-    pinMode(1, PWM_OUTPUT);
+    pinMode(pin, PWM_OUTPUT);
     // GPIO::gpio_set_function(m_pin, GPIO::PI_FUNCTION::OUTPUT);
     //  set the PWM mode to milliseconds stype
     pwmSetMode(PWM_MODE_MS);
@@ -24,6 +24,6 @@ Servo::~Servo()
 
 void Servo::write_servo(int pulse)
 {
-    pwmWrite(1, pulse);
+    pwmWrite(23, pulse);
     // GPIO::pwm_write(20000, period_us);
 }
