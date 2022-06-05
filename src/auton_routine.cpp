@@ -17,6 +17,7 @@ void Auton::run_auton()
     
     // then position the arm above the left hand box
     move_to_sync({575,60}); // Bottom left
+    Log::log_info("Move to left box");
     
     // // Pneumatics
     // //  WiringGPIO 8 - GPIO2 - Piston Up
@@ -29,6 +30,7 @@ void Auton::run_auton()
 
     // // close the gripper
     gripper_close(23);
+    Log::log_info("Gripper closed");
 
     // Move the pneumatics up again
     Log::log_info("Piston up");
@@ -36,6 +38,7 @@ void Auton::run_auton()
 
     // // Move the arm over to the side
     move_to_sync({375,360}); // to the side for stacking
+    Log::log_info("Move to side");
 
     // // Move the pneumatics down
     Log::log_info("Piston down");
@@ -43,6 +46,7 @@ void Auton::run_auton()
 
     // release the gripper to place the box
     gripper_open(23);
+    Log::log_info("Gripper release");
 
     // Move the pneumatics up again
     Log::log_info("Piston up");
@@ -50,6 +54,7 @@ void Auton::run_auton()
 
     // // move to second box position
     move_to_sync({575,190}); // second box position
+    Log::log_info("Move to right box");
 
     // lower pneumatics
     Log::log_info("Piston down");
@@ -57,6 +62,7 @@ void Auton::run_auton()
 
     // close gripper
     gripper_close(23);
+    Log::log_info("Gripper closed");
 
     // lift pneumatics
     Log::log_info("Piston up");
@@ -64,6 +70,7 @@ void Auton::run_auton()
 
     // // move box to same position on the side
     move_to_sync({375,360}); // to the side for stacking
+    Log::log_info("Move to side");
 
     // lower pneumatics
     Log::log_info("Piston down");
@@ -71,13 +78,15 @@ void Auton::run_auton()
 
     // release gripper
     gripper_open(23);
+    Log::log_info("Gripper release");
 
     // raise pneumatics
     Log::log_info("Piston up");
     use_pneumatics(8);
 
     // return arm to home and finish
-    home(0.0001);  
+    home(0.0001); 
+    Log::log_info("Routine complete"); 
 }
 
 ////////////////////////////////////////////////////////////////////////
