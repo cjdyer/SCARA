@@ -4,6 +4,8 @@
 const int down_pin = 9;
 const int up_pin = 8;
 
+bool big_left = false;
+
 void Auton::run_auton()
 {
     wiringPiSetup(); // Setup the WiringPi library to manipulate GPIO
@@ -18,10 +20,6 @@ void Auton::run_auton()
     home(0.0001);    // Move the arm to a home position to start the process
     Log::log_info("Auton::run_auton - Homed");
 
-    // then position the arm above the left hand box
-    move_to_sync({566,60}); // Bottom left
-    Log::log_info("Move to left box");
-
     // Pneumatics
     //  WiringGPIO 8 - GPIO2 - Piston Up
     //  WiringGPIO 9 - GPIO3 - Piston Down
@@ -30,14 +28,30 @@ void Auton::run_auton()
     usleep(200000);  // Initially always ensure to set pneumatics high
 
     // lower the pneumatics
-    Log::log_info("P Down");
-    use_pneumatics(false, 255000);
-    sleep(1);
-
-    // close the gripper
-    gripper_close(23, 180, 80);
-    Log::log_info("Gripper closed");
-    sleep(1);
+    if(big_left){
+        // then position the arm above the left hand box
+        move_to_sync({566,60}); // Bottom left
+        Log::log_info("Move to left box");
+        Log::log_info("P Down");
+        use_pneumatics(false, 255000);
+        sleep(1);
+        // close the gripper
+        gripper_close(23, 180, 80);
+        Log::log_info("Gripper closed");
+        sleep(1);
+    }
+    else{
+        // move to second box position
+        move_to_sync({564,150}); // Bottom left
+        Log::log_info("Move to left box");
+        Log::log_info("P Down");
+        use_pneumatics(false, 265000);
+        sleep(1);
+        // close the gripper
+        gripper_close(23, 180, 70);
+        Log::log_info("Gripper closed");
+        sleep(1);
+    }
 
     // Move the pneumatics up again
     Log::log_info("P Up");
@@ -62,18 +76,31 @@ void Auton::run_auton()
     use_pneumatics(true, 0);
     sleep(1);
 
-    // // move to second box position
-    move_to_sync({564,150}); // Bottom left
-    Log::log_info("Move to left box");
-
-    // // lower pneumatics
-    Log::log_info("P Down");
-    use_pneumatics(false, 265000);
-    sleep(1);
-
-    // // close gripper
-    gripper_close(23, 180, 70);
-    Log::log_info("Gripper closed");
+    // lower the pneumatics
+    if(big_left){
+        // move to second box position
+        move_to_sync({564,150}); // Bottom left
+        Log::log_info("Move to left box");
+        Log::log_info("P Down");
+        use_pneumatics(false, 265000);
+        sleep(1);
+        // close the gripper
+        gripper_close(23, 180, 70);
+        Log::log_info("Gripper closed");
+        sleep(1);
+    }
+    else{
+        // then position the arm above the left hand box
+        move_to_sync({566,60}); // Bottom left
+        Log::log_info("Move to left box");
+        Log::log_info("P Down");
+        use_pneumatics(false, 255000);
+        sleep(1);
+        // close the gripper
+        gripper_close(23, 180, 80);
+        Log::log_info("Gripper closed");
+        sleep(1);
+    }
 
     // // lift pneumatics
     Log::log_info("P Up");
